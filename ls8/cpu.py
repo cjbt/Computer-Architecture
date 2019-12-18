@@ -7,15 +7,12 @@ import os
 # NOP = 0b00000000
 
 HLT = 0b00000001 
-
 LDI = 0b10000010 # 00000rrr iiiiiiii
-
+MUL = 0b10100010 # 2 operands
 # LD  = 0b10000011 00000aaa 00000bbb
 # ST  = 0b10000100 00000aaa 00000bbb
-
 # PUSH= 0b01000101 00000rrr
 # POP = 0b01000110 00000rrr
-
 PRN = 0b01000111 # 00000rrr
 # PRA = 0b01001000 00000rrr
 
@@ -84,8 +81,8 @@ class CPU:
     def run(self):
         """Run the CPU."""
         halted = False
-        instruction = self.ram[0]
-        print(instruction, LDI)
+        # instruction = self.ram[0]
+        # print(instruction, LDI)
 
         while not halted:
             instruction = self.ram[self.__pc]
@@ -103,6 +100,13 @@ class CPU:
                 register_num = self.reg[key]
                 print(register_num)
                 self.__pc += 2
+            
+            elif instruction == MUL:
+                registerA = self.ram[self.__pc + 1]
+                registerB = self.ram[self.__pc + 2]
+                result = self.reg[registerA] * self.reg[registerB]
+                self.reg[registerA] = result
+                self.__pc += 3
 
             else:
                 print(f"Uknown instruction at index {self.__pc}")
