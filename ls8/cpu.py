@@ -1,6 +1,8 @@
 """CPU functionality."""
 
 import sys
+import os
+
 
 # NOP = 0b00000000
 
@@ -26,27 +28,23 @@ class CPU:
         self.reg = [0] * 8
         self.__pc =  0
 
-    def load(self):
+    def load(self, filename):
         """Load a program into memory."""
-
+        cur_path = os.path.dirname(__file__)
+        new_path = os.path.join(cur_path, f'examples/{filename}')
         address = 0
 
-        # For now, we've just hardcoded a program:
+        with open(new_path) as f:
+            for line in f:
+                n = line.split("#")
+                n[0] = n[0].strip()
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+                if n[0] == '':
+                    continue
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
-
+                value = int(n[0], 2)
+                self.ram[address] = value
+                address += 1
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -86,6 +84,9 @@ class CPU:
     def run(self):
         """Run the CPU."""
         halted = False
+        instruction = self.ram[0]
+        print(instruction, LDI)
+
         while not halted:
             instruction = self.ram[self.__pc]
 
