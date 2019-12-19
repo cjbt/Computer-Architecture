@@ -111,27 +111,23 @@ class CPU:
 
             elif instruction == PUSH:
                 # 1. Decrement the `SP`.
-                print(self.reg[self.__sp])
                 self.reg[self.__sp] -= 1
 
                 # 2. Copy the value in the given register to the address pointed to by
                 #   `SP`.
                 register_num = self.ram[self.__pc + 1]
                 value = self.reg[register_num]
-                self.reg[self.__sp] = value
-
+                self.ram[self.reg[self.__sp]] = value
                 self.__pc += 2
 
             elif instruction == POP:
                 # 1. Copy the value from the address pointed to by `SP` to the given register.
                 register_num = self.ram[self.__pc + 1]
-                value = self.reg[self.__sp]
-                self.ram[register_num] = value
-
+                value = self.ram[self.reg[self.__sp]]
+                self.reg[register_num] = value
 
                 # 2. Increment `SP`.
-                self.__sp += 1
-
+                self.reg[self.__sp] += 1
                 self.__pc += 2
 
                 
