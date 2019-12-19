@@ -11,8 +11,8 @@ LDI = 0b10000010 # 00000rrr iiiiiiii
 MUL = 0b10100010 # 2 operands
 # LD  = 0b10000011 00000aaa 00000bbb
 # ST  = 0b10000100 00000aaa 00000bbb
-# PUSH= 0b01000101 00000rrr
-# POP = 0b01000110 00000rrr
+PUSH = 0b01000101 # 00000rrr
+POP = 0b01000110 # 00000rrr
 PRN = 0b01000111 # 00000rrr
 # PRA = 0b01001000 00000rrr
 
@@ -24,6 +24,7 @@ class CPU:
         self.ram = {}
         self.reg = [0] * 8
         self.__pc =  0
+        self.__sp = 5
 
     def load(self, filename):
         """Load a program into memory."""
@@ -107,6 +108,33 @@ class CPU:
                 result = self.reg[registerA] * self.reg[registerB]
                 self.reg[registerA] = result
                 self.__pc += 3
+
+            elif instruction == PUSH:
+                # 1. Decrement the `SP`.
+                print(self.reg[self.__sp])
+                self.reg[self.__sp] -= 1
+
+                # 2. Copy the value in the given register to the address pointed to by
+                #   `SP`.
+                register_num = self.ram[self.__pc + 1]
+                value = self.reg[register_num]
+                self.reg[self.__sp] = value
+
+                self.__pc += 2
+
+            elif instruction == POP:
+                # 1. Copy the value from the address pointed to by `SP` to the given register.
+                register_num = self.ram[self.__pc + 1]
+                value = self.reg[self.__sp]
+                self.ram[register_num] = value
+
+
+                # 2. Increment `SP`.
+                self.__sp += 1
+
+                self.__pc += 2
+
+                
 
             else:
                 print(f"Uknown instruction at index {self.__pc}")
